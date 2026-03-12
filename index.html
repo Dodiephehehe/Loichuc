@@ -124,8 +124,8 @@
     <div class="container">
         <div id="screen1" class="screen active">
             <div class="input-box">
-                <h2>Nhập cả họ và tên để nhận lời chúc nhe (Viết hoa các chữ cái đầu)</h2>
-                <input type="text" id="nameInput" placeholder="Họ và tên...">
+                <h2>Nhập cả họ và tên để nhận lời chúc nhe</h2>
+                <input type="text" id="nameInput" placeholder="Ví dụ: Nguyễn Văn A">
                 <button onclick="checkName()">Xác nhận</button>
             </div>
         </div>
@@ -141,7 +141,7 @@
 
         <div id="screen3" class="screen">
             <div class="letter-paper">
-                <h2>Thân gửi em: <span id="nameDisplay"></span></h2>
+                <h2>Gửi: <span id="nameDisplay"></span></h2>
                 <p class="message" id="msgDisplay"></p>
             </div>
         </div>
@@ -153,7 +153,8 @@
         const studentData = {
             "Nguyễn Văn An": "Chúc em luôn nỗ lực và gặt hái được nhiều thành công trong môn Tin học!",
             "Lê Thị B": "Hy vọng em sẽ có những kỷ niệm thật đẹp tại HNUE nhé.",
-            "Lê Yến Nhi": "Chúc con vợ mai thi anh được 8+ và lý thì cứ gọi là ez nhé :v"
+            "Lê Yến Nhi": "Chúc con vợ mai thi anh được 8+ và lý thì cứ gọi là ez nhé :v",
+            "Lê Gia An": "ÔN LÀN"
         };
 
         let current = { name: "", msg: "" };
@@ -198,4 +199,5 @@
 </body>
 
 </html>
+
 
