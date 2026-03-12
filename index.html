@@ -21,28 +21,55 @@
 
         body { background: url('bg1.jpg') no-repeat center center/cover; }
 
-        .container { display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; }
-        .screen { display: none; width: 100%; animation: fadeIn 0.5s; }
+        .container { 
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .screen { 
+            display: none; 
+            width: 100%; 
+            position: absolute;
+            left: 0;
+            animation: fadeIn 0.5s; 
+        }
+
         .active { display: block; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Màn 1: Nhập tên */
+        /* MÀN 1: NHẬP TÊN - ĐẨY LÊN CAO */
+        #screen1 {
+            top: 40px; /* Khoảng cách sát đỉnh */
+            text-align: center;
+        }
+
         .input-box {
             background: rgba(255, 255, 255, 0.95);
             padding: 40px; border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             display: inline-block;
         }
+
         input { padding: 12px; font-size: 18px; border: 2px solid #ddd; border-radius: 8px; width: 250px; display: block; margin: 20px auto; text-align: center; }
         button { padding: 12px 35px; font-size: 18px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; }
 
-        /* MÀN 2: PHONG BÌ HIỆU ỨNG MỞ */
+        /* MÀN 2: PHONG BÌ - GIỮ NGUYÊN GIỮA MÀN HÌNH */
+        #screen2 {
+            top: 0;
+            height: 100vh;
+            display: none; /* Sẽ được display: flex khi .active */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #screen2.active { display: flex; }
+
         .envelope-wrapper {
             position: relative;
-            width: 300px;
-            height: 200px;
+            width: 300px; height: 200px;
             background: var(--env-dark);
-            margin: 0 auto;
             cursor: pointer;
             filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
             animation: float 3s infinite ease-in-out;
@@ -50,59 +77,45 @@
 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        /* Tờ giấy bên trong */
         .paper {
-            position: absolute;
-            bottom: 5px; left: 10px;
+            position: absolute; bottom: 5px; left: 10px;
             width: 280px; height: 180px;
             background: var(--paper-color);
             z-index: 1;
-            transition: transform 0.8s ease-in-out 0.5s; /* Chạy sau khi nắp mở */
+            transition: transform 0.8s ease-in-out 0.5s;
         }
 
-        /* Nắp phong bì */
         .flap {
-            position: absolute;
-            top: 0; left: 0;
-            width: 0; height: 0;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
+            position: absolute; top: 0; left: 0; width: 0; height: 0;
+            border-left: 150px solid transparent; border-right: 150px solid transparent;
             border-top: 100px solid var(--env-color);
-            z-index: 3;
-            transform-origin: top;
+            z-index: 3; transform-origin: top;
             transition: transform 0.5s ease-in-out;
         }
 
-        /* Thân phong bì */
         .pocket {
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 0; height: 0;
-            border-left: 150px solid var(--env-color);
-            border-right: 150px solid var(--env-color);
-            border-bottom: 100px solid var(--env-dark);
-            border-top: 100px solid transparent;
+            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
+            border-left: 150px solid var(--env-color); border-right: 150px solid var(--env-color);
+            border-bottom: 100px solid var(--env-dark); border-top: 100px solid transparent;
             z-index: 2;
         }
 
-        /* Khi bấm mở thư */
-        .envelope-wrapper.open .flap {
-            transform: rotateX(180deg);
-            z-index: 0; /* Nắp lật ra sau */
-        }
-
-        .envelope-wrapper.open .paper {
-            transform: translateY(-100px); /* Giấy trồi lên */
-        }
-
+        .envelope-wrapper.open .flap { transform: rotateX(180deg); z-index: 0; }
+        .envelope-wrapper.open .paper { transform: translateY(-100px); }
         .instruction { color: white; margin-top: 50px; font-size: 20px; font-weight: bold; }
 
-        /* Màn 3: Nội dung thiệp */
+        /* MÀN 3: LỜI CHÚC - ĐẨY LÊN CAO */
+        #screen3 {
+            top: 30px; /* Khoảng cách sát đỉnh */
+            text-align: center;
+        }
+
         .letter-paper {
-            background: #fff; padding: 50px; max-width: 500px; margin: 0 auto;
+            background: #fff; padding: 40px; max-width: 500px; margin: 0 auto;
             border-radius: 5px; box-shadow: 0 0 25px rgba(0,0,0,0.2);
             border-top: 8px solid var(--env-dark);
         }
+
         .message { font-size: 20px; line-height: 1.8; color: #2c3e50; white-space: pre-line; text-align: left; }
     </style>
 </head>
@@ -111,7 +124,7 @@
     <div class="container">
         <div id="screen1" class="screen active">
             <div class="input-box">
-                <h2>Nhập tên để nhận lời chúc nhe</h2>
+                <h2>Nhập cả họ và tên để nhận lời chúc nhe</h2>
                 <input type="text" id="nameInput" placeholder="Họ và tên...">
                 <button onclick="checkName()">Xác nhận</button>
             </div>
@@ -152,14 +165,15 @@
                 current.name = found; current.msg = studentData[found];
                 document.body.style.background = "#1a1a1a";
                 switchScreen('screen2');
-            } else { alert("Viết sai tên à? Em thử gõ lại tên đi :v"); }
+            } else { 
+                alert("Viết sai tên à? Em thử gõ lại tên đi :v"); 
+            }
         }
 
         function openAndShow() {
             const env = document.getElementById('envelope');
-            env.classList.add('open'); // Kích hoạt hiệu ứng CSS lật nắp và giấy
+            env.classList.add('open');
 
-            // Đợi 1.5 giây để học sinh kịp nhìn hiệu ứng mở thư rồi mới chuyển màn hình
             setTimeout(() => {
                 document.body.style.background = "url('bg2.jpg') no-repeat center center/cover";
                 switchScreen('screen3');
@@ -167,7 +181,7 @@
                 document.getElementById('msgDisplay').innerText = current.msg;
                 document.getElementById('music').play();
 
-                const end = Date.now() + 4500;
+                const end = Date.now() + 2000;
                 (function frame() {
                     confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
                     confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
