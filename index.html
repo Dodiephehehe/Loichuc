@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gửi 11A1 hehe</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
+        /* --- CSS PIXEL STYLE --- */
         :root {
             --env-color: #f3e5ab; 
             --env-dark: #e5d38f;
@@ -17,116 +19,100 @@
             font-family: 'Segoe UI', Tahoma, sans-serif;
             transition: background 0.8s ease;
             overflow: hidden;
+            background-color: #202020;
+            color: white;
         }
 
-        body { background: url('bg1.jpg') no-repeat center center/cover; }
+        /* Lớp phủ mở khóa âm thanh */
+        #audio-unlock {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-family: 'VT323', monospace; font-size: 30px;
+        }
 
-        .container { 
-            position: relative;
-            width: 100%;
-            height: 100vh;
+        #game-container {
+            position: relative; width: 100%; height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
 
         .screen { 
-            display: none; 
-            width: 100%; 
-            position: absolute;
-            left: 0;
+            display: none; width: 100%; height: 100vh;
+            position: absolute; left: 0; top: 0;
             animation: fadeIn 0.5s; 
+            flex-direction: column; justify-content: center; align-items: center;
         }
 
-        .active { display: block; }
+        .active { display: flex; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /*nhapten*/
-        #screen1 {
-            top: 40px; 
-            text-align: center;
+        /* --- NPC SCREEN --- */
+        .npc-character {
+            height: 200px; image-rendering: pixelated; margin-bottom: 20px;
         }
 
+        .dialogue-box {
+            background: #000; border: 4px solid #fff; padding: 20px;
+            width: 85%; max-width: 500px; min-height: 100px;
+            font-family: 'VT323', monospace; color: #fff; font-size: 26px;
+            position: relative; box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
+        }
+
+        .choices { margin-top: 20px; display: flex; gap: 15px; justify-content: center; }
+
+        .pixel-btn {
+            background: #000; color: #fff; border: 2px solid #fff;
+            padding: 10px 20px; font-family: 'VT323', monospace;
+            font-size: 22px; cursor: pointer; text-transform: uppercase;
+        }
+        .pixel-btn:hover { background: #fff; color: #000; }
+
+        /* --- INPUT SCREEN --- */
         .input-box {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px; border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            display: inline-block;
+            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 15px;
+            text-align: center; color: #333;
         }
-
         input { padding: 12px; font-size: 18px; border: 2px solid #ddd; border-radius: 8px; width: 250px; display: block; margin: 20px auto; text-align: center; }
-        button { padding: 12px 35px; font-size: 18px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .confirm-btn { padding: 12px 35px; font-size: 18px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; }
 
-        /*phongbi*/
-        #screen2 {
-            top: 0;
-            height: 100vh;
-            display: none; 
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        #screen2.active { display: flex; }
-
-        .envelope-wrapper {
-            position: relative;
-            width: 300px; height: 200px;
-            background: var(--env-dark);
-            cursor: pointer;
-            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
-            animation: float 3s infinite ease-in-out;
-        }
-
+        /* --- ENVELOPE --- */
+        .envelope-wrapper { position: relative; width: 300px; height: 200px; background: var(--env-dark); cursor: pointer; animation: float 3s infinite ease-in-out; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-
-        .paper {
-            position: absolute; bottom: 5px; left: 10px;
-            width: 280px; height: 180px;
-            background: var(--paper-color);
-            z-index: 1;
-            transition: transform 0.8s ease-in-out 0.5s;
-        }
-
-        .flap {
-            position: absolute; top: 0; left: 0; width: 0; height: 0;
-            border-left: 150px solid transparent; border-right: 150px solid transparent;
-            border-top: 100px solid var(--env-color);
-            z-index: 3; transform-origin: top;
-            transition: transform 0.5s ease-in-out;
-        }
-
-        .pocket {
-            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
-            border-left: 150px solid var(--env-color); border-right: 150px solid var(--env-color);
-            border-bottom: 100px solid var(--env-dark); border-top: 100px solid transparent;
-            z-index: 2;
-        }
-
+        .paper { position: absolute; bottom: 5px; left: 10px; width: 280px; height: 180px; background: var(--paper-color); z-index: 1; transition: transform 0.8s ease-in-out 0.5s; }
+        .flap { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 150px solid transparent; border-right: 150px solid transparent; border-top: 100px solid var(--env-color); z-index: 3; transform-origin: top; transition: transform 0.5s ease-in-out; }
+        .pocket { position: absolute; bottom: 0; left: 0; width: 0; height: 0; border-left: 150px solid var(--env-color); border-right: 150px solid var(--env-color); border-bottom: 100px solid var(--env-dark); border-top: 100px solid transparent; z-index: 2; }
         .envelope-wrapper.open .flap { transform: rotateX(180deg); z-index: 0; }
         .envelope-wrapper.open .paper { transform: translateY(-100px); }
-        .instruction { color: white; margin-top: 50px; font-size: 20px; font-weight: bold; }
 
-        /*loichuc*/
-        #screen3 {
-            top: 30px; 
-            text-align: center;
-        }
-
-        .letter-paper {
-            background: #fff; padding: 40px; max-width: 500px; margin: 0 auto;
-            border-radius: 5px; box-shadow: 0 0 25px rgba(0,0,0,0.2);
-            border-top: 8px solid var(--env-dark);
-        }
-
-        .message { font-size: 20px; line-height: 1.8; color: #2c3e50; white-space: pre-line; text-align: left; }
+        /* --- LETTER --- */
+        .letter-paper { background: #fff; padding: 40px; max-width: 500px; margin: 0 auto; border-radius: 5px; color: #333; box-shadow: 0 0 20px rgba(0,0,0,0.5); border-top: 8px solid var(--env-dark); }
+        .message { font-size: 20px; line-height: 1.6; white-space: pre-line; text-align: left; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div id="screen1" class="screen active">
+    <div id="audio-unlock">
+        NHẤN VÀO ĐÂY ĐỂ BẮT ĐẦU...
+    </div>
+
+    <div id="game-container">
+        <div id="screen-npc" class="screen">
+            <img src="character.png" class="npc-character" alt="Character">
+            <div class="dialogue-box">
+                <div id="npc-text"></div>
+                <div class="choices" id="npc-choices" style="visibility: hidden;">
+                    <button class="pixel-btn" onclick="goToInput()">Nhận lời chúc</button>
+                    <button class="pixel-btn" id="btn-runaway">Bỏ qua</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen1" class="screen">
             <div class="input-box">
-                <h2>Nhập cả họ và tên để nhận lời chúc nhe</h2>
+                <h2>Nhập cả họ và tên để nhận lời chúc nhé</h2>
                 <input type="text" id="nameInput" placeholder="Ví dụ: Nguyễn Văn A">
-                <button onclick="checkName()">Xác nhận</button>
+                <button class="confirm-btn" onclick="checkName()">Xác nhận</button>
             </div>
         </div>
 
@@ -136,7 +122,7 @@
                 <div class="paper"></div>
                 <div class="pocket"></div>
             </div>
-            <p class="instruction">Bấm vào phong bì để mở thư nhé!</p>
+            <p style="color: white; margin-top: 50px; font-size: 20px; font-weight: bold;">Bấm vào phong bì để mở thư nhé!</p>
         </div>
 
         <div id="screen3" class="screen">
@@ -147,6 +133,7 @@
         </div>
     </div>
 
+    <audio id="blip" src="blip.mp3"></audio>
     <audio id="music" src="music.mp3" loop></audio>
 
     <script>
@@ -174,7 +161,7 @@
             "Trịnh Gia Huy": "Mong rằng em sẽ ngày càng tự tin và mạnh mẽ hơn trên con đường phía trước. (Sở thích của Huy nói tóm gọn lại là thích các bạn nam à?)",
             "Vũ Thu Huyền": "Ấn tượng của cô về Huyền ban đầu là mắt to nhìn cute và quả mái ngố nhìn hay hay và trầm, về sau lúc tiếp xúc nhiều hơn thì thấy Huyền cũng mát mát tẻn tẻn hihi. Cô quý Huyền lắm, chúc Huyền mãi xinh gái, học giỏi và đỗ được HNUE để học với cô nha.",
             "Trần Phúc Khánh": "Chúc em luôn là một người tử tế, chăm chỉ và sống hết mình với những điều mình lựa chọn.",
-            "Nguyễn Đình Tuấn Linh": "Sở thích của em hơi sợ nhưng mà nghe cũng hay đấy =)) Chúc em cao hơn cả Toàn, học được 60 phút liền để vào NEU nhá",
+            "Nguyễn Đình Tuấn Linh": "Sở thích của em hơi sợ nhưng mà nghe cũng hay đấy =)) Chúc em cao hơn cả Toàn, học được 60 phút liền để vào NEU nhá (sr TLinh vì cô hiểu nhầm tí, chúc em sớm hết bịnh nha)", 
             "Phan Trần Gia Linh": "Có ấn tượng rất nhiều hihi, Gia Linh thì thân thiện khỏi nói. Tiếp xúc nhiều nên có gì nói cô cũng nói hết rồi =) thôi thì chúc Linh luôn tự tin, tỏa sáng, đạt aim IELTS và đỗ hết tất cả các trường đại học mà mình mơ ước",
             "Hoàng Đức Long": "Chúc em luôn mạnh mẽ, kiên trì và không bỏ cuộc trước những mục tiêu mà mình đặt ra (cụ thể làm DJ và biết blender)",
             "Nguyễn Thành Long": "Huhu đọc lời chúc của em cho cô thì cô thấy em là một người rất tình cảm. Chúc Long đỗ NEU và quý Nam Phong hơn (cô cũng thích nghe nhạc vc)",
@@ -205,30 +192,79 @@
         };
 
         let current = { name: "", msg: "" };
+        const blip = document.getElementById('blip');
+        const music = document.getElementById('music');
+        const introMsg = "Hi, cô đã vắt óc ngồi nghĩ lời chúc cho tất cả các bạn trong lớp rồi (trong đấy có cả em) em có muốn xem lời chúc là gì không ?";
+
+        // --- MỞ KHÓA ÂM THANH ---
+        document.getElementById('audio-unlock').addEventListener('click', function() {
+            this.style.display = 'none'; // Ẩn lớp phủ
+            switchScreen('screen-npc');
+            typeWriter(introMsg, 0, () => {
+                document.getElementById('npc-choices').style.visibility = 'visible';
+            });
+        });
+
+        function switchScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function typeWriter(text, i, cb) {
+            const npcText = document.getElementById('npc-text');
+
+            if (i === 0) {
+                blip.play().catch(()=>{}); // phát 1 lần khi bắt đầu nói
+            }
+
+            if (i < text.length) {
+                npcText.innerHTML += text.charAt(i);
+                setTimeout(() => typeWriter(text, i + 1, cb), 50);
+            } else {
+                blip.pause(); // dừng khi nói xong
+                blip.currentTime = 0;
+                if (cb) cb();
+            }
+        }
+
+        // Nút "Bỏ qua" chạy trốn
+        const runBtn = document.getElementById('btn-runaway');
+        runBtn.addEventListener('mouseover', () => {
+            const x = Math.random() * (window.innerWidth - runBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - runBtn.offsetHeight);
+            runBtn.style.position = 'fixed';
+            runBtn.style.left = x + 'px';
+            runBtn.style.top = y + 'px';
+        });
+
+        function goToInput() {
+            document.body.style.background = "url('bg1.jpg') no-repeat center center/cover";
+            switchScreen('screen1');
+        }
 
         function checkName() {
             const val = document.getElementById('nameInput').value.trim();
             const found = Object.keys(studentData).find(n => n.toLowerCase() === val.toLowerCase());
             if (found) {
-                current.name = found; current.msg = studentData[found];
+                current.name = found; 
+                current.msg = studentData[found];
                 document.body.style.background = "#1a1a1a";
                 switchScreen('screen2');
             } else { 
-                alert("Viết sai tên à? Em thử gõ lại tên đi :v"); 
+                alert("Viết sai tên à? Thử lại đi em :v"); 
             }
         }
 
         function openAndShow() {
-            const env = document.getElementById('envelope');
-            env.classList.add('open');
-
+            document.getElementById('envelope').classList.add('open');
             setTimeout(() => {
                 document.body.style.background = "url('bg2.jpg') no-repeat center center/cover";
                 switchScreen('screen3');
                 document.getElementById('nameDisplay').innerText = current.name;
                 document.getElementById('msgDisplay').innerText = current.msg;
-                document.getElementById('music').play();
-
+                music.play().catch(()=>{}); // Phát nhạc nền
+                
+                // Pháo hoa
                 const end = Date.now() + 2000;
                 (function frame() {
                     confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
@@ -237,14 +273,6 @@
                 }());
             }, 1500);
         }
-
-        function switchScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
     </script>
 </body>
-
 </html>
-
-

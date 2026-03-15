@@ -1,0 +1,85 @@
+/* Thiết lập cơ bản và Font pixel */
+body {
+    background-color: #202020; /* Màu nền tối */
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'VT323', monospace; /* Font chữ phong cách pixel */
+    color: white;
+    image-rendering: pixelated; /* Giữ độ sắc nét cho ảnh pixel */
+}
+
+/* Container chính của game */
+#game-container {
+    position: relative;
+    width: 640px; /* Độ phân giải game mẫu */
+    height: 480px;
+    background-color: #333; /* Màu nền khu vực chơi game */
+    border: 8px solid #f0f0f0; /* Viền */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Để khung hội thoại ở dưới */
+    padding: 20px;
+    overflow: hidden; /* Ngăn các phần tử tràn ra ngoài (quan trọng cho nút "Bỏ qua") */
+}
+
+/* Container nhân vật */
+#character-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#character-container img {
+    height: 200px; /* Tăng kích thước nhân vật */
+}
+
+/* Khung hội thoại */
+#dialogue-box {
+    position: relative;
+    background: rgba(0, 0, 0, 0.8); /* Nền đen mờ */
+    border: 6px solid #f0f0f0;
+    padding: 15px;
+    font-size: 24px;
+    letter-spacing: 1px;
+    min-height: 120px; /* Đảm bảo đủ không gian cho văn bản */
+}
+
+/* Container cho các lựa chọn */
+#choice-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+/* Style cho các nút lựa chọn */
+.choice-button {
+    background-color: transparent;
+    border: 3px solid #f0f0f0;
+    color: white;
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.choice-button:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Lớp ẩn khung hội thoại */
+.hidden {
+    display: none !important;
+}
+
+/* Đảm bảo ảnh nhân vật vẫn giữ phong cách pixel khi phóng to */
+.pixelated {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
