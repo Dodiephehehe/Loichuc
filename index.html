@@ -23,7 +23,6 @@
             color: white;
         }
 
-        /* Lớp phủ mở khóa âm thanh */
         #audio-unlock {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 1000;
@@ -47,10 +46,7 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- NPC SCREEN --- */
-        .npc-character {
-            height: 200px; image-rendering: pixelated; margin-bottom: 20px;
-        }
+        .npc-character { height: 200px; image-rendering: pixelated; margin-bottom: 20px; }
 
         .dialogue-box {
             background: #000; border: 4px solid #fff; padding: 20px;
@@ -65,19 +61,19 @@
             background: #000; color: #fff; border: 2px solid #fff;
             padding: 10px 20px; font-family: 'VT323', monospace;
             font-size: 22px; cursor: pointer; text-transform: uppercase;
+            /* Thêm transition để nút lướt đi mượt hơn */
+            transition: left 0.1s ease-out, top 0.1s ease-out;
         }
         .pixel-btn:hover { background: #fff; color: #000; }
 
-        /* --- INPUT SCREEN --- */
         .input-box {
             background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 15px;
             text-align: center; color: #333;
-            transform: translateY(-170px);
+            transform: translateY(-150px);
         }
         input { padding: 12px; font-size: 18px; border: 2px solid #ddd; border-radius: 8px; width: 250px; display: block; margin: 20px auto; text-align: center; }
         .confirm-btn { padding: 12px 35px; font-size: 18px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; }
 
-        /* --- ENVELOPE --- */
         .envelope-wrapper { position: relative; width: 300px; height: 200px; background: var(--env-dark); cursor: pointer; animation: float 3s infinite ease-in-out; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         .paper { position: absolute; bottom: 5px; left: 10px; width: 280px; height: 180px; background: var(--paper-color); z-index: 1; transition: transform 0.8s ease-in-out 0.5s; }
@@ -86,16 +82,13 @@
         .envelope-wrapper.open .flap { transform: rotateX(180deg); z-index: 0; }
         .envelope-wrapper.open .paper { transform: translateY(-100px); }
 
-        /* --- LETTER --- */
-        .letter-paper { background: #fff; padding: 40px; max-width: 500px; margin: 0 auto; border-radius: 5px; color: #333; box-shadow: 0 0 20px rgba(0,0,0,0.5); border-top: 8px solid var(--env-dark); }
-        .message { font-size: 20px; line-height: 1.6; white-space: pre-line; text-align: left; }
+        .letter-paper { background: #fff; padding: 40px; width: 85%; max-width: 500px; margin: 0 auto; border-radius: 5px; color: #333; box-shadow: 0 0 20px rgba(0,0,0,0.5); border-top: 8px solid var(--env-dark); overflow-y: auto; max-height: 80vh; }
+        .message { font-size: 18px; line-height: 1.6; white-space: pre-line; text-align: left; }
     </style>
 </head>
 <body>
 
-    <div id="audio-unlock">
-        NHẤN VÀO ĐÂY ĐỂ BẮT ĐẦU...
-    </div>
+    <div id="audio-unlock">NHẤN VÀO ĐÂY ĐỂ BẮT ĐẦU...</div>
 
     <div id="game-container">
         <div id="screen-npc" class="screen">
@@ -123,13 +116,14 @@
                 <div class="paper"></div>
                 <div class="pocket"></div>
             </div>
-            <p style="color: white; margin-top: 50px; font-size: 20px; font-weight: bold;">Bấm vào phong bì để mở thư nhé!</p>
+            <p style="color: white; margin-top: 50px; font-size: 20px; font-weight: bold; text-align: center;">Bấm vào phong bì để mở thư nhé!</p>
         </div>
 
         <div id="screen3" class="screen">
             <div class="letter-paper">
                 <h2>Gửi: <span id="nameDisplay"></span></h2>
                 <p class="message" id="msgDisplay"></p>
+                <button class="confirm-btn" style="margin-top: 20px; background: #333;" onclick="location.reload()">Quay lại</button>
             </div>
         </div>
     </div>
@@ -195,14 +189,15 @@
         let current = { name: "", msg: "" };
         const blip = document.getElementById('blip');
         const music = document.getElementById('music');
-        const introMsg = "Hi, cô đã vắt óc ngồi nghĩ lời chúc cho tất cả các bạn trong lớp rồi (trong đấy có cả em) em có muốn xem lời chúc là gì không ?";
+        const introMsg = "Hi, cô đã vắt óc ngồi nghĩ lời chúc cho tất cả các bạn trong lớp rồi (trong đấy có cả em). Em có muốn xem lời chúc là gì không ?";
 
         // --- MỞ KHÓA ÂM THANH ---
         document.getElementById('audio-unlock').addEventListener('click', function() {
-            this.style.display = 'none'; // Ẩn lớp phủ
+            this.style.display = 'none';
             switchScreen('screen-npc');
             typeWriter(introMsg, 0, () => {
                 document.getElementById('npc-choices').style.visibility = 'visible';
+                setupRunawayButton();
             });
         });
 
@@ -213,30 +208,48 @@
 
         function typeWriter(text, i, cb) {
             const npcText = document.getElementById('npc-text');
-
-            if (i === 0) {
-                blip.play().catch(()=>{}); // phát 1 lần khi bắt đầu nói
-            }
+            if (i === 0) blip.play().catch(()=>{});
 
             if (i < text.length) {
                 npcText.innerHTML += text.charAt(i);
                 setTimeout(() => typeWriter(text, i + 1, cb), 50);
             } else {
-                blip.pause(); // dừng khi nói xong
+                blip.pause();
                 blip.currentTime = 0;
                 if (cb) cb();
             }
         }
 
-        // Nút "Bỏ qua" chạy trốn
-        const runBtn = document.getElementById('btn-runaway');
-        runBtn.addEventListener('mouseover', () => {
-            const x = Math.random() * (window.innerWidth - runBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - runBtn.offsetHeight);
-            runBtn.style.position = 'fixed';
-            runBtn.style.left = x + 'px';
-            runBtn.style.top = y + 'px';
-        });
+        // --- HÀM NÚT BỎ QUA CHẠY TRỐN (PC & MOBILE) ---
+        function setupRunawayButton() {
+            const runBtn = document.getElementById('btn-runaway');
+            
+            const runawayAction = (e) => {
+                if (e) e.preventDefault(); // Cực kỳ quan trọng để chặn click trên mobile
+                
+                const maxX = window.innerWidth - runBtn.offsetWidth - 20;
+                const maxY = window.innerHeight - runBtn.offsetHeight - 20;
+                
+                const newX = Math.max(10, Math.random() * maxX);
+                const newY = Math.max(10, Math.random() * maxY);
+                
+                runBtn.style.position = 'fixed';
+                runBtn.style.left = newX + 'px';
+                runBtn.style.top = newY + 'px';
+                runBtn.style.zIndex = '9999';
+            };
+
+            // Di chuột (PC)
+            runBtn.addEventListener('mouseover', runawayAction);
+            // Chạm vào (Điện thoại)
+            runBtn.addEventListener('touchstart', runawayAction);
+            // Click (Nếu lỡ bấm trúng)
+            runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                runawayAction();
+                alert("Không bỏ qua được đâu em ơi! :v");
+            });
+        }
 
         function goToInput() {
             document.body.style.background = "url('bg1.jpg') no-repeat center center/cover";
@@ -263,9 +276,8 @@
                 switchScreen('screen3');
                 document.getElementById('nameDisplay').innerText = current.name;
                 document.getElementById('msgDisplay').innerText = current.msg;
-                music.play().catch(()=>{}); // Phát nhạc nền
+                music.play().catch(()=>{});
                 
-                // Pháo hoa
                 const end = Date.now() + 2000;
                 (function frame() {
                     confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
